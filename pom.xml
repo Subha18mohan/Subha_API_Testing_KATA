@@ -51,6 +51,21 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Jackson: converts Java objects (records) to JSON request bodies and
+             JSON responses back to Java objects. Rest-Assured uses it automatically. -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.19.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.19.2</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Lombok: generates constructors/getters at compile time to cut boilerplate -->
         <dependency>
             <groupId>org.projectlombok</groupId>
