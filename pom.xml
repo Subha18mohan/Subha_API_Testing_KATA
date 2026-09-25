@@ -23,12 +23,15 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit</artifactId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
             <version>7.22.2</version>
+            <scope>test</scope>
         </dependency>
+        <!-- Dependency injection for step definitions: Cucumber creates one shared
+             instance of each class per scenario and passes it into constructors -->
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <artifactId>cucumber-picocontainer</artifactId>
             <version>7.22.2</version>
             <scope>test</scope>
         </dependency>
