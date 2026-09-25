@@ -33,3 +33,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+### Windows ###
+Thumbs.db
+desktop.ini
+
+### Logs & test output ###
+*.log
+test-output/
