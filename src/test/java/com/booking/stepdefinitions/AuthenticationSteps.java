@@ -1,5 +1,6 @@
 package com.booking.stepdefinitions;
 
+import com.booking.config.ApiConfig;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.http.ContentType;
@@ -16,7 +17,7 @@ public class AuthenticationSteps {
 
     @When("the administrator logs in with valid credentials")
     public void theAdministratorLogsInWithValidCredentials() {
-        com.booking.config.ApiConfig config = com.booking.config.ApiConfig.get();
+        ApiConfig config = ApiConfig.get();
         response = given()
                 .baseUri(config.baseUrl())
                 .contentType(ContentType.JSON)
