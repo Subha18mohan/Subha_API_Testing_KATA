@@ -1,9 +1,10 @@
 package com.booking.stepdefinitions;
 
+import com.booking.api.Endpoints;
+import com.booking.api.RequestSpecFactory;
 import com.booking.config.ApiConfig;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
@@ -19,13 +20,12 @@ public class AuthenticationSteps {
     public void theAdministratorLogsInWithValidCredentials() {
         ApiConfig config = ApiConfig.get();
         response = given()
-                .baseUri(config.baseUrl())
-                .contentType(ContentType.JSON)
+                .spec(RequestSpecFactory.baseSpec())
                 .body("""
                         {"username": "%s", "password": "%s"}
                         """.formatted(config.username(), config.password()))
                 .when()
-                .post("/auth/login");
+                .post(Endpoints.LOGIN);
     }
 
     @Then("the login is successful")
