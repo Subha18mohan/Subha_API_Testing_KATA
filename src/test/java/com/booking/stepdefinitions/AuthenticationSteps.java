@@ -16,13 +16,15 @@ public class AuthenticationSteps {
 
     @When("the administrator logs in with valid credentials")
     public void theAdministratorLogsInWithValidCredentials() {
+        com.booking.config.ApiConfig config = com.booking.config.ApiConfig.get();
         response = given()
+                .baseUri(config.baseUrl())
                 .contentType(ContentType.JSON)
                 .body("""
-                        {"username": "admin", "password": "password"}
-                        """)
+                        {"username": "%s", "password": "%s"}
+                        """.formatted(config.username(), config.password()))
                 .when()
-                .post("https://automationintesting.online/api/auth/login");
+                .post("/auth/login");
     }
 
     @Then("the login is successful")
