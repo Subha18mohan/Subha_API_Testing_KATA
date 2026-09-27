@@ -34,4 +34,9 @@ public class ScenarioContext {
     public void rememberCreatedBooking(int bookingId) {
         createdBookingIds.add(bookingId);
     }
+
+    /** @return the id of the booking created most recently in this scenario */
+    public int lastCreatedBookingId() {
+        return createdBookingIds.getLast();
+    }
 }
