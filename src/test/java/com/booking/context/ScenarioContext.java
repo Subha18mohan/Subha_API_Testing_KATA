@@ -1,5 +1,6 @@
 package com.booking.context;
 
+import com.booking.model.Booking;
 import io.restassured.response.Response;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,4 +19,6 @@ public class ScenarioContext {
 
     /** Response of the most recent API call made by a step. */
     private Response lastResponse;
+    /** Booking prepared by a Given step and sent by a When step. */
+    private Booking preparedBooking;
 }
