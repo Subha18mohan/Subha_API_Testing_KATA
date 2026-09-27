@@ -3,6 +3,7 @@ package com.booking.stepdefinitions;
 import com.booking.api.BookingClient;
 import com.booking.context.ScenarioContext;
 import com.booking.data.BookingDataFactory;
+import com.booking.data.BookingField;
 import com.booking.model.Booking;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -27,6 +28,11 @@ public class BookingSteps {
     @Given("a guest has prepared a valid booking for room {int}")
     public void aGuestHasPreparedAValidBookingForRoom(int roomId) {
         context.setPreparedBooking(BookingDataFactory.validBooking(roomId));
+    }
+
+    @Given("the guest enters {string} as the {bookingField}")
+    public void theGuestEntersAsThe(String value, BookingField field) {
+        context.setPreparedBooking(field.applyTo(context.getPreparedBooking(), value));
     }
 
     @When("the guest submits the booking")
