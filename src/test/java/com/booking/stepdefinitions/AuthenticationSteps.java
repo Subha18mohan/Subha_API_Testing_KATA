@@ -1,18 +1,13 @@
 package com.booking.stepdefinitions;
 
-import com.booking.api.Endpoints;
-import com.booking.api.RequestSpecFactory;
+import com.booking.api.AuthClient;
 import com.booking.config.ApiConfig;
 import com.booking.context.ScenarioContext;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.RequiredArgsConstructor;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.emptyOrNullString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
 /** Step definitions for the admin login feature. */
 @RequiredArgsConstructor
@@ -22,6 +17,7 @@ public class AuthenticationSteps {
     private static final int HTTP_UNAUTHORIZED = 401;
 
     private final ScenarioContext context;
+    private final AuthClient authClient;
 
     @When("the administrator logs in with valid credentials")
     public void theAdministratorLogsInWithValidCredentials() {
@@ -59,14 +55,8 @@ public class AuthenticationSteps {
         context.getLastResponse().then().body("token", nullValue());
     }
 
-    /** Sends the login request and stores the response for the Then steps. */
+    /** Logs in through the API client and stores the response for the Then steps. */
     private void logIn(String username, String password) {
-        context.setLastResponse(given()
-                .spec(RequestSpecFactory.baseSpec())
-                .body("""
-                        {"username": "%s", "password": "%s"}
-                        """.formatted(username, password))
-                .when()
-                .post(Endpoints.LOGIN));
+        context.setLastResponse(authClient.login(username, password));
     }
 }
