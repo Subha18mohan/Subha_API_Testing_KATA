@@ -15,6 +15,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 
@@ -24,6 +25,7 @@ public class BookingSteps {
 
     private static final int HTTP_CREATED = 201;
     private static final int HTTP_BAD_REQUEST = 400;
+    private static final int HTTP_CONFLICT = 409;
 
     private final ScenarioContext context;
     private final BookingClient bookingClient;
@@ -43,9 +45,24 @@ public class BookingSteps {
         context.setPreparedBooking(field.applyTo(context.getPreparedBooking(), null));
     }
 
+    @Given("room {int} is already booked for a stay")
+    public void roomIsAlreadyBookedForAStay(int roomId) {
+        Booking existing = BookingDataFactory.validBooking(roomId);
+        submit(existing).then().statusCode(HTTP_CREATED);
+        context.setPreparedBooking(existing);
+    }
+
     @When("the guest submits the booking")
     public void theGuestSubmitsTheBooking() {
         submit(context.getPreparedBooking());
+    }
+
+    @When("another guest books room {int} for the same dates")
+    public void anotherGuestBooksRoomForTheSameDates(int roomId) {
+        Booking other = BookingDataFactory.validBooking(roomId).toBuilder()
+                .bookingdates(context.getPreparedBooking().bookingdates())
+                .build();
+        submit(other);
     }
 
     @Then("the booking is confirmed")
@@ -75,6 +92,13 @@ public class BookingSteps {
     @Then("the guest is told {string}")
     public void theGuestIsTold(String message) {
         context.getLastResponse().then().body("errors", hasItem(message));
+    }
+
+    @Then("the booking is refused because the room is already taken")
+    public void theBookingIsRefusedBecauseTheRoomIsAlreadyTaken() {
+        context.getLastResponse().then()
+                .statusCode(HTTP_CONFLICT)
+                .body("error", equalTo("Failed to create booking"));
     }
 
     /** Sends the booking, stores the response and remembers the id for clean-up. */

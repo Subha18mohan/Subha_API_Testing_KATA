@@ -68,3 +68,9 @@ Feature: Create a room booking
       | field         |
       | email address |
       | phone number  |
+
+  @negative @conflict
+  Scenario: A room cannot be booked twice for the same dates
+    Given room 1 is already booked for a stay
+    When another guest books room 1 for the same dates
+    Then the booking is refused because the room is already taken
