@@ -48,3 +48,23 @@ Feature: Create a room booking
       | field         | problem          | value             | message                             |
       | email address | missing the @    | guest.example.com | must be a well-formed email address |
       | email address | missing a domain | guest@            | must be a well-formed email address |
+
+  @negative @validation
+  Scenario Outline: Booking is rejected when the <field> is missing
+    Given a guest has prepared a valid booking for room 1
+    But the guest leaves out the <field>
+    When the guest submits the booking
+    Then the booking is rejected as invalid
+
+    Examples: Required details that are enforced
+      | field      |
+      | first name |
+      | last name  |
+
+    # Known bug: the specification marks email and phone as required,
+    # but the API accepts a booking without them (201 Created).
+    @known-bug
+    Examples: Required details that are not enforced
+      | field         |
+      | email address |
+      | phone number  |

@@ -38,6 +38,11 @@ public class BookingSteps {
         context.setPreparedBooking(field.applyTo(context.getPreparedBooking(), value));
     }
 
+    @Given("the guest leaves out the {bookingField}")
+    public void theGuestLeavesOutThe(BookingField field) {
+        context.setPreparedBooking(field.applyTo(context.getPreparedBooking(), null));
+    }
+
     @When("the guest submits the booking")
     public void theGuestSubmitsTheBooking() {
         submit(context.getPreparedBooking());
