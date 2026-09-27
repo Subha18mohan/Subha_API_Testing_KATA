@@ -74,3 +74,12 @@ Feature: Create a room booking
     Given room 1 is already booked for a stay
     When another guest books room 1 for the same dates
     Then the booking is refused because the room is already taken
+
+    # Known bug: instead of a 400 validation error the API answers
+  # 409 Conflict "Failed to create booking", the same as a double booking.
+  @negative @validation @known-bug
+  Scenario: Booking is rejected when check-out is before check-in
+    Given a guest has prepared a valid booking for room 1
+    But the check-out date is before the check-in date
+    When the guest submits the booking
+    Then the booking is rejected as invalid

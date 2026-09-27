@@ -5,6 +5,7 @@ import com.booking.context.ScenarioContext;
 import com.booking.data.BookingDataFactory;
 import com.booking.data.BookingField;
 import com.booking.model.Booking;
+import com.booking.model.BookingDates;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -50,6 +51,14 @@ public class BookingSteps {
         Booking existing = BookingDataFactory.validBooking(roomId);
         submit(existing).then().statusCode(HTTP_CREATED);
         context.setPreparedBooking(existing);
+    }
+
+    @Given("the check-out date is before the check-in date")
+    public void theCheckOutDateIsBeforeTheCheckInDate() {
+        Booking booking = context.getPreparedBooking();
+        BookingDates dates = booking.bookingdates();
+        BookingDates swapped = new BookingDates(dates.checkout(), dates.checkin());
+        context.setPreparedBooking(booking.toBuilder().bookingdates(swapped).build());
     }
 
     @When("the guest submits the booking")
