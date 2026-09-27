@@ -7,11 +7,13 @@ import com.booking.model.Booking;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.restassured.response.Response;
 import lombok.RequiredArgsConstructor;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /** Step definitions for creating bookings. */
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class BookingSteps {
 
     @When("the guest submits the booking")
     public void theGuestSubmitsTheBooking() {
-        context.setLastResponse(bookingClient.create(context.getPreparedBooking()));
+        submit(context.getPreparedBooking());
     }
 
     @Then("the booking is confirmed")
@@ -49,5 +51,15 @@ public class BookingSteps {
                 () -> assertEquals(sent.lastname(), confirmed.lastname(), "last name"),
                 () -> assertEquals(sent.depositpaid(), confirmed.depositpaid(), "deposit paid"),
                 () -> assertEquals(sent.bookingdates(), confirmed.bookingdates(), "dates"));
+    }
+
+    /** Sends the booking, stores the response and remembers the id for clean-up. */
+    private Response submit(Booking booking) {
+        Response response = bookingClient.create(booking);
+        context.setLastResponse(response);
+        if (response.statusCode() == HTTP_CREATED) {
+            context.rememberCreatedBooking(response.path("bookingid"));
+        }
+        return response;
     }
 }

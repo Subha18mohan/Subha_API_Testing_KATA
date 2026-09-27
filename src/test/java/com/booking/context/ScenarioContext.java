@@ -5,6 +5,9 @@ import io.restassured.response.Response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Data shared by all step definition classes during ONE scenario.
  * <p>
@@ -21,4 +24,12 @@ public class ScenarioContext {
     private Response lastResponse;
     /** Booking prepared by a Given step and sent by a When step. */
     private Booking preparedBooking;
+
+    /** Ids of bookings created in this scenario, deleted again afterwards. */
+    private final List<Integer> createdBookingIds = new ArrayList<>();
+
+    /** Records a booking id so the clean-up hook can delete it. */
+    public void rememberCreatedBooking(int bookingId) {
+        createdBookingIds.add(bookingId);
+    }
 }
