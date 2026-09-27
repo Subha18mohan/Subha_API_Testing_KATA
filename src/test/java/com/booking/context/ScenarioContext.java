@@ -24,6 +24,8 @@ public class ScenarioContext {
     private Response lastResponse;
     /** Booking prepared by a Given step and sent by a When step. */
     private Booking preparedBooking;
+    /** Admin token for this scenario: set by a @Before hook, cleared by an @After hook. */
+    private String token;
 
     /** Ids of bookings created in this scenario, deleted again afterwards. */
     private final List<Integer> createdBookingIds = new ArrayList<>();
