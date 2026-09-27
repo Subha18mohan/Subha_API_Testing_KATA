@@ -6,18 +6,14 @@ import com.booking.data.BookingDataFactory;
 import com.booking.data.BookingField;
 import com.booking.model.Booking;
 import com.booking.model.BookingDates;
+import com.booking.support.BookingAssertions;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import lombok.RequiredArgsConstructor;
 
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 
 /** Step definitions for creating bookings. */
@@ -83,14 +79,8 @@ public class BookingSteps {
 
     @Then("the confirmation shows the details the guest submitted")
     public void theConfirmationShowsTheDetailsTheGuestSubmitted() {
-        Booking sent = context.getPreparedBooking();
         Booking confirmed = context.getLastResponse().as(Booking.class);
-        assertAll("booking confirmation",
-                () -> assertEquals(sent.roomid(), confirmed.roomid(), "room"),
-                () -> assertEquals(sent.firstname(), confirmed.firstname(), "first name"),
-                () -> assertEquals(sent.lastname(), confirmed.lastname(), "last name"),
-                () -> assertEquals(sent.depositpaid(), confirmed.depositpaid(), "deposit paid"),
-                () -> assertEquals(sent.bookingdates(), confirmed.bookingdates(), "dates"));
+        BookingAssertions.assertSameDetails(context.getPreparedBooking(), confirmed);
     }
 
     @Then("the booking is rejected as invalid")
