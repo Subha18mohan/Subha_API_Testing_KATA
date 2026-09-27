@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.notNullValue;
 
 
 /** Step definitions for creating bookings. */
@@ -21,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BookingSteps {
 
     private static final int HTTP_CREATED = 201;
+    private static final int HTTP_BAD_REQUEST = 400;
 
     private final ScenarioContext context;
     private final BookingClient bookingClient;
@@ -57,6 +60,16 @@ public class BookingSteps {
                 () -> assertEquals(sent.lastname(), confirmed.lastname(), "last name"),
                 () -> assertEquals(sent.depositpaid(), confirmed.depositpaid(), "deposit paid"),
                 () -> assertEquals(sent.bookingdates(), confirmed.bookingdates(), "dates"));
+    }
+
+    @Then("the booking is rejected as invalid")
+    public void theBookingIsRejectedAsInvalid() {
+        context.getLastResponse().then().statusCode(HTTP_BAD_REQUEST);
+    }
+
+    @Then("the guest is told {string}")
+    public void theGuestIsTold(String message) {
+        context.getLastResponse().then().body("errors", hasItem(message));
     }
 
     /** Sends the booking, stores the response and remembers the id for clean-up. */

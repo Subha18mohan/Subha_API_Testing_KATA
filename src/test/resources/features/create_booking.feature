@@ -26,3 +26,25 @@ Feature: Create a room booking
       | last name    | 30     | Abcdefghijklmnopqrstuvwxyzabcd |
       | phone number | 11     | 01234567890                    |
       | phone number | 21     | 012345678901234567890          |
+
+  @negative @validation
+  Scenario Outline: Booking is rejected when the <field> is <problem>
+    Given a guest has prepared a valid booking for room 1
+    But the guest enters "<value>" as the <field>
+    When the guest submits the booking
+    Then the booking is rejected as invalid
+    And the guest is told "<message>"
+
+    Examples: Values just outside the allowed length
+      | field        | problem   | value                           | message                        |
+      | first name   | too short | Al                              | size must be between 3 and 18  |
+      | first name   | too long  | Abcdefghijklmnopqrs             | size must be between 3 and 18  |
+      | last name    | too short | Li                              | size must be between 3 and 30  |
+      | last name    | too long  | Abcdefghijklmnopqrstuvwxyzabcde | size must be between 3 and 30  |
+      | phone number | too short | 0123456789                      | size must be between 11 and 21 |
+      | phone number | too long  | 0123456789012345678901          | size must be between 11 and 21 |
+
+    Examples: Wrongly formatted values
+      | field         | problem          | value             | message                             |
+      | email address | missing the @    | guest.example.com | must be a well-formed email address |
+      | email address | missing a domain | guest@            | must be a well-formed email address |
