@@ -10,6 +10,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
 @RequiredArgsConstructor
 public class UpdateBookingSteps {
 
@@ -41,6 +43,16 @@ public class UpdateBookingSteps {
         update(renamed, context.getToken());
     }
 
+    @When("the administrator changes only the guest's first name")
+    public void theAdministratorChangesOnlyTheGuestsFirstName() {
+        partiallyUpdateFirstName(context.getToken());
+    }
+
+    @When("someone changes only the guest's first name without logging in")
+    public void someoneChangesOnlyTheGuestsFirstNameWithoutLoggingIn() {
+        partiallyUpdateFirstName(null);
+    }
+
     @Then("the booking is updated")
     public void theBookingIsUpdated() {
         context.getLastResponse().then().statusCode(HTTP_OK);
@@ -57,6 +69,13 @@ public class UpdateBookingSteps {
     private void update(Booking changed, String token) {
         context.setPreparedBooking(changed);
         context.setLastResponse(bookingClient.update(context.lastCreatedBookingId(), changed, token));
+    }
+
+    private void partiallyUpdateFirstName(String token) {
+        String newFirstName = "Changed" + BookingDataFactory.randomLetters(4);
+        context.setPreparedBooking(context.getPreparedBooking().toBuilder().firstname(newFirstName).build());
+        context.setLastResponse(bookingClient.partialUpdate(
+                context.lastCreatedBookingId(), Map.of("firstname", newFirstName), token));
     }
 
     private Booking withNewDates() {

@@ -41,3 +41,15 @@ Feature: Change a booking
     When the administrator changes the first name to "Al"
     Then the booking is rejected as invalid
     And the guest is told "size must be between 3 and 18"
+
+
+  @positive @partial-update @known-bug
+  Scenario: Administrator changes only the guest's first name
+    When the administrator changes only the guest's first name
+    Then the booking is updated
+    And the booking shows the new details
+
+  @negative @security @partial-update @known-bug
+  Scenario: A booking cannot be partly changed without logging in
+    When someone changes only the guest's first name without logging in
+    Then access to the booking is denied
