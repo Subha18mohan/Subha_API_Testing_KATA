@@ -1,67 +1,128 @@
-# Kata API Testing in Java
+# Hotel Booking API – Test Automation (Java, Rest-Assured, Cucumber)
 
-API Testing and Java Exercise: Setting up a Basic API Test Automation Framework.
+Automated API tests for the booking and authentication endpoints of the hotel booking application at https://automationintesting.online.
 
-## Objective
-The objective of this exercise is to evaluate your knowledge on API testing and Java by setting up a basic API Test Automation framework using Rest-Assured and Cucumber. You will need to create a test suite that executes a few tests against one endpoint of a hotel booking website and evaluates their responses.
+The tests are written in business language (Gherkin), so every scenario reads as a rule of the hotel's booking process and every step calls the API through a small, reusable client layer.
 
-## Background
-The application under test is a simple hotel booking website where you can book a room and also send a form with a request.
+## Tech stack
 
-The website can be accessed at https://automationintesting.online/.
+| Tool | Version | Purpose |
+|---|---|---|
+| Java | 21 | Language (records, text blocks, sequenced collections) |
+| Maven | 3.9+ | Build and dependency management |
+| Rest-Assured | 5.5.2 | HTTP requests and response checks |
+| Cucumber | 7.22.2 | BDD scenarios in Gherkin |
+| JUnit Platform Suite | 5.12.2 | Runs Cucumber through Maven Surefire |
+| PicoContainer | via Cucumber | Shares one scenario context between step classes (dependency injection) |
+| Jackson | 2.21.1 | JSON to Java objects |
+| Lombok | 1.18.40 | Removes boilerplate (constructors, getters, builders) |
 
-The Swagger documentation for the two endpoints you will be testing can be found at:
+## Project structure
 
-Booking endpoint: https://automationintesting.online/booking/swagger-ui/index.html  
-Optionally, you also have the Authentican endpoint: https://automationintesting.online/auth/swagger-ui/index.html
+```
+src/test/java/com/booking
+├── TestRunner.java              Cucumber suite, report plugins
+├── api                          How to talk to the API
+│   ├── Endpoints                All endpoint paths in one place
+│   ├── RequestSpecFactory       Shared base URL, JSON settings and logging
+│   ├── AuthClient               Login
+│   └── BookingClient            Create, view, update, partial update, cancel
+├── config/ApiConfig             Reads config.properties (can be overridden with -D)
+├── context/ScenarioContext      State shared by the steps of one scenario
+├── data                         Test data
+│   ├── BookingDataFactory       Valid bookings with random future dates
+│   └── BookingField             Business field names mapped to the booking model
+├── model                        Booking and BookingDates as Java records
+├── stepdefinitions              One class per feature + Hooks + ParameterTypes
+└── support/BookingAssertions    Reusable check that two bookings match
 
-### Swagger
-This website is an external application which is not in our control.  
-We noticed that the Swagger documentation is sometimes not available on the mentioned URL above.  
-As a backup, you can find the Swagger documentation in this repository at [src/test/resources/spec/booking.yaml](src/test/resources/spec/booking.yaml)
+src/test/resources
+├── features                     Gherkin feature files
+├── spec/booking.yaml            Swagger spec used as the reference
+├── config.properties            Base URL and credentials
+└── junit-platform.properties    Default tag filter and naming
+```
 
-The Open API Spec file is only supported in the Ultimate version of IntelliJ IDEA. But you can copy the content of the file and paste it in an online Swagger editor like https://editor.swagger.io/ to visualize the API documentation.
+### Design choices
+- **API client (service object) pattern:** step definitions never build HTTP requests. They call `AuthClient` and `BookingClient`, so a change in the API is fixed in one place.
+- **Factory pattern:** `RequestSpecFactory` builds the shared request setup and `BookingDataFactory` builds test data.
+- **Dependency injection with PicoContainer:** clients and `ScenarioContext` are injected through constructors, so no static state is shared between scenarios.
+- **Hooks:** `@Before` logs in as administrator for booking scenarios. `@After` deletes every booking the scenario created and then clears the token, so tests leave no data behind on the shared API.
+- **Independent tests:** every booking uses random future dates, so scenarios can run in any order without clashing.
 
-### Authentication
-In order to authenticate yourself, the required credentials are:
-* Username: `admin`
-* Password: `password`
+## Test coverage
 
-## Task
-You are provided with an extremely basic API test project.
+43 scenarios: 36 in the regular run and 7 documenting known bugs.
 
-Please clone the project and create a new branch with your name. At the end, please push your branch to this project.
+| Feature | Endpoint | Scenarios | What is checked |
+|---|---|---|---|
+| Admin authentication | `POST /auth/login` | 5 | Valid login returns a token; wrong password, unknown user and wrong-case credentials are refused |
+| Create a room booking | `POST /booking` | 21 | Valid booking and returned details; boundary values for first name, last name and phone; invalid email formats; missing fields; double booking; check-out before check-in |
+| View a booking | `GET /booking/{id}` | 4 | Details match the booking; no login and invalid token are denied; unknown id is not found |
+| Change a booking | `PUT` / `PATCH /booking/{id}` | 8 | Move to new dates and verify; denied without login; invalid values rejected; partial update |
+| Cancel a booking | `DELETE /booking/{id}` | 4 | Cancelled booking can no longer be found; no login and invalid token are denied; unknown id |
+| Booking journey | all | 1 | End to end: log in, book, view, move to new dates, cancel, confirm it is gone |
 
-The project to start from, can be found here: https://github.com/freddyschoeters/API_Testing_kata
+Techniques used: boundary value analysis, equivalence partitioning, positive and negative tests, security (authorisation) tests, and an end-to-end journey.
 
-Your task is to set up an API Test Automation framework from this project using Java, Rest-Assured, and Cucumber (feel free to add more dependencies if required).
+Cucumber features used: Background, Scenario Outline with several named and tagged Examples tables, tags, tagged hooks, a custom parameter type (`{bookingField}`), and business-language steps shared across features.
 
-It is up to you to define the test cases. You don’t need to have a full coverage, but you need to show enough variation on the types of tests that you would need to write and execute, and what to check in the response.
+## Prerequisites
+- JDK 21
+- Maven 3.9 or later (or the Maven bundled with IntelliJ IDEA)
+- Internet access to https://automationintesting.online
 
-This kata has the purpose to evaluate both your technical skills as well as your testing skills.
+## How to run
 
-`For this task, you will use the booking endpoint.`
+Run the regular suite (known bugs excluded):
+```
+mvn clean test
+```
 
+Run a subset by tag (in PowerShell, put the argument in quotes):
+```
+mvn clean test "-Dcucumber.filter.tags=@smoke"
+mvn clean test "-Dcucumber.filter.tags=@booking and @negative"
+```
 
-## Requirements
-* Use Java as the programming language
-* Use Rest-Assured as the API testing library
-* Use Cucumber as the BDD framework
-* Design your codebase using a proper Java design pattern
-* Write good tests with correct checks
-* Use Git for version control and push your codebase to an open GitHub repository
-* Make regular commits to demonstrate your progress
+Reproduce the known bugs (these scenarios are expected to fail):
+```
+mvn clean test "-Dcucumber.filter.tags=@known-bug"
+```
 
+Use another environment or user without changing the code:
+```
+mvn clean test "-Dbase.url=https://other-host/api" "-Dauth.username=admin" "-Dauth.password=secret"
+```
 
-## Deliverables
-* Your branch pushed in the provided project.
-* A comprehensive test suite covering the scenarios mentioned above
-* A well-structured codebase with proper design patterns and comments
-* Regular commits demonstrating your progress
+### Tags
+| Tag | Meaning |
+|---|---|
+| `@auth`, `@booking` | Area under test |
+| `@create`, `@view`, `@update`, `@delete`, `@e2e` | Feature |
+| `@smoke` | Main happy paths |
+| `@positive`, `@negative` | Expected outcome |
+| `@validation`, `@security` | Type of check |
+| `@known-bug` | Describes the correct behaviour; excluded from the regular run |
 
-## Evaluation Criteria
-* Being able to successfully run the tests
-* Correctness and completeness of the test suite
-* Quality of the codebase (design patterns, structure, code quality, …)
-* Use of Rest-Assured and Cucumber features
-* Commit history and progress demonstration
+## Reports
+- After every run: `target/cucumber-reports.html` (HTML) and `target/cucumber.json`.
+- A copy of the latest results is committed in [`reports/`](reports):
+    - [`cucumber-report.html`](reports/cucumber-report.html): regular run, 36 passed, 7 skipped
+    - [`known-bugs-report.html`](reports/known-bugs-report.html): the 7 `@known-bug` scenarios failing, with the actual API responses
+
+Download the file and open it in a browser. GitHub shows HTML files as source code.
+
+## Bugs and observations
+See [BUG_REPORT.md](BUG_REPORT.md) for 5 bugs and 8 differences between the API and its Swagger specification. Summary:
+
+- `PATCH /booking/{id}` is documented but returns 405.
+- A booking cannot be updated without changing its dates (409).
+- An invalid update returns internal server details in the error message.
+- Check-out before check-in returns 409 instead of 400.
+- Email and phone number are not required, although the spec says they are.
+
+Where the API works but differs from the spec (for example 403 instead of 401, 202 instead of 201), the tests accept both values and the difference is recorded as an observation.
+
+## Commit convention
+Commits follow [Conventional Commits](https://www.conventionalcommits.org): `feat` (framework code), `test` (scenarios), `refactor`, `build` (Maven), `docs`. The message body explains why the change was made.
