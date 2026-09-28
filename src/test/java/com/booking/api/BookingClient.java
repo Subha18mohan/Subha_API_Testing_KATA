@@ -20,6 +20,22 @@ public class BookingClient {
                 .get(Endpoints.BOOKING_BY_ID);
     }
 
+    public Response update(int bookingId, Object booking, String token) {
+        return request(token)
+                .pathParam("id", bookingId)
+                .body(booking)
+                .when()
+                .put(Endpoints.BOOKING_BY_ID);
+    }
+
+    public Response partialUpdate(int bookingId, Object changes, String token) {
+        return request(token)
+                .pathParam("id", bookingId)
+                .body(changes)
+                .when()
+                .patch(Endpoints.BOOKING_BY_ID);
+    }
+
     public Response delete(int bookingId, String token) {
         return request(token)
                 .pathParam("id", bookingId)
