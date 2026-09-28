@@ -9,7 +9,6 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <!-- Compile for Java 21 (LTS). Any newer JDK (e.g. 25) can build and run it. -->
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lombok.version>1.18.40</lombok.version>
@@ -17,8 +16,6 @@
         <junit.version>5.12.2</junit.version>
     </properties>
 
-    <!-- BOMs ("bill of materials") pin one consistent version for every
-         JUnit and Cucumber module, so Surefire never mixes versions -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -39,7 +36,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- Cucumber Dependencies -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
@@ -50,8 +46,7 @@
             <artifactId>cucumber-junit-platform-engine</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Dependency injection for step definitions: Cucumber creates one shared
-             instance of each class per scenario and passes it into constructors -->
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-picocontainer</artifactId>
@@ -62,14 +57,13 @@
             <artifactId>junit-platform-suite</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Declared explicitly so Surefire uses this version instead of its own -->
+
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- Rest Assured Dependency -->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -77,8 +71,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Jackson: converts Java objects (records) to JSON request bodies and
-             JSON responses back to Java objects. Rest-Assured uses it automatically. -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -92,7 +84,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Lombok: generates constructors/getters at compile time to cut boilerplate -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -100,7 +91,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- JUnit 5 Dependency -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -110,14 +100,11 @@
 
     <build>
         <plugins>
-            <!-- Compiles the Java code for the release set above -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.0</version>
                 <configuration>
-                    <!-- Since JDK 23 annotation processors are no longer picked up
-                         automatically, so Lombok must be registered here -->
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -128,10 +115,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Runs the tests on 'mvn test'.
-                 3.5.4+ is required: 3.5.3 has a bug that reports Cucumber scenarios
-                 as 'Tests run: 0' and never fails the build
-                 (https://github.com/apache/maven-surefire/issues/834). -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -141,7 +124,6 @@
                         <include>**/TestRunner.java</include>
                     </includes>
                     <properties>
-                        <!-- Readable "Feature - Scenario" names in Surefire reports -->
                         <configurationParameters>
                             cucumber.junit-platform.naming-strategy=long
                         </configurationParameters>
@@ -150,5 +132,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
