@@ -111,7 +111,11 @@ mvn clean test "-Dbase.url=https://other-host/api" "-Dauth.username=admin" "-Dau
     - [`cucumber-report.html`](reports/cucumber-report.html): regular run, 36 passed, 7 skipped
     - [`known-bugs-report.html`](reports/known-bugs-report.html): the 7 `@known-bug` scenarios failing, with the actual API responses
 
-Download the file and open it in a browser. GitHub shows HTML files as source code.
+View them online (GitHub Pages):
+- [Regular run report](https://subha18mohan.github.io/Subha_API_Testing_KATA/reports/cucumber-report.html)
+- [Known bugs report](https://subha18mohan.github.io/Subha_API_Testing_KATA/reports/known-bugs-report.html)
+
+GitHub shows HTML files as source code, so use the links above or download the file and open it in a browser.
 
 ## Bugs and observations
 See [BUG_REPORT.md](BUG_REPORT.md) for 5 bugs and 8 differences between the API and its Swagger specification. Summary:
