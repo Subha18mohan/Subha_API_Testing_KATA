@@ -9,10 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import static org.hamcrest.Matchers.*;
 
-/** Step definitions for the admin login feature. */
 @RequiredArgsConstructor
 public class AuthenticationSteps {
-
     private static final int HTTP_OK = 200;
     private static final int HTTP_UNAUTHORIZED = 401;
 
@@ -55,7 +53,6 @@ public class AuthenticationSteps {
         context.getLastResponse().then().body("token", nullValue());
     }
 
-    /** Logs in through the API client and stores the response for the Then steps. */
     private void logIn(String username, String password) {
         context.setLastResponse(authClient.login(username, password));
     }

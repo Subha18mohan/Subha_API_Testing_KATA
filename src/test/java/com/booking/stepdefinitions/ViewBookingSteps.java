@@ -11,10 +11,8 @@ import lombok.RequiredArgsConstructor;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.anyOf;
 
-/** Step definitions for viewing a booking. */
 @RequiredArgsConstructor
 public class ViewBookingSteps {
-
     private static final int HTTP_OK = 200;
     private static final int HTTP_UNAUTHORIZED = 401;
     private static final int HTTP_FORBIDDEN = 403;
@@ -69,7 +67,6 @@ public class ViewBookingSteps {
         context.getLastResponse().then().statusCode(HTTP_NOT_FOUND);
     }
 
-    /** Looks up a booking by id with the given token (null = not logged in). */
     private void lookUp(int bookingId, String token) {
         context.setLastResponse(bookingClient.getById(bookingId, token));
     }

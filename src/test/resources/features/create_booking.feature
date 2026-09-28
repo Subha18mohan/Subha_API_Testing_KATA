@@ -61,8 +61,6 @@ Feature: Create a room booking
       | first name |
       | last name  |
 
-    # Known bug: the specification marks email and phone as required,
-    # but the API accepts a booking without them (201 Created).
     @known-bug
     Examples: Required details that are not enforced
       | field         |
@@ -75,8 +73,6 @@ Feature: Create a room booking
     When another guest books room 1 for the same dates
     Then the booking is refused because the room is already taken
 
-    # Known bug: instead of a 400 validation error the API answers
-  # 409 Conflict "Failed to create booking", the same as a double booking.
   @negative @validation @known-bug
   Scenario: Booking is rejected when check-out is before check-in
     Given a guest has prepared a valid booking for room 1

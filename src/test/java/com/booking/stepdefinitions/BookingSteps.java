@@ -15,11 +15,8 @@ import lombok.RequiredArgsConstructor;
 
 import static org.hamcrest.Matchers.*;
 
-
-/** Step definitions for creating bookings. */
 @RequiredArgsConstructor
 public class BookingSteps {
-
     private static final int HTTP_CREATED = 201;
     private static final int HTTP_BAD_REQUEST = 400;
     private static final int HTTP_CONFLICT = 409;
@@ -100,7 +97,6 @@ public class BookingSteps {
                 .body("error", equalTo("Failed to create booking"));
     }
 
-    /** Sends the booking, stores the response and remembers the id for clean-up. */
     private Response submit(Booking booking) {
         Response response = bookingClient.create(booking);
         context.setLastResponse(response);
