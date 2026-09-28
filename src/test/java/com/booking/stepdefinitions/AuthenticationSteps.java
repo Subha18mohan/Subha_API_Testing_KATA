@@ -45,7 +45,10 @@ public class AuthenticationSteps {
 
     @Then("an authentication token is issued")
     public void anAuthenticationTokenIsIssued() {
-        context.getLastResponse().then().body("token", not(emptyOrNullString()));
+        String token = context.getLastResponse().then()
+                .body("token", not(emptyOrNullString()))
+                .extract().path("token");
+        context.setToken(token);
     }
 
     @Then("no authentication token is issued")
