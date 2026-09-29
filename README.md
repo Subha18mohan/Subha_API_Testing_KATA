@@ -112,6 +112,7 @@ mvn clean test "-Dbase.url=https://other-host/api" "-Dauth.username=admin" "-Dau
     - [`known-bugs-report.html`](reports/known-bugs-report.html): the 7 `@known-bug` scenarios failing, with the actual API responses
 
 View them online (GitHub Pages):
+- [Full run, all 43 scenarios including known bugs](https://subha18mohan.github.io/Subha_API_Testing_KATA/reports/full-test-report.html)
 - [Regular run report](https://subha18mohan.github.io/Subha_API_Testing_KATA/reports/cucumber-report.html)
 - [Known bugs report](https://subha18mohan.github.io/Subha_API_Testing_KATA/reports/known-bugs-report.html)
 
